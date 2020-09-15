@@ -1,11 +1,16 @@
 package com.codecool.processwatch.gui;
 
+import com.codecool.processwatch.domain.ProcessSource;
+import com.codecool.processwatch.domain.ProcessWatchApp;
+import com.codecool.processwatch.queries.FilterByName;
+import com.codecool.processwatch.queries.SelectAll;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -57,14 +62,26 @@ public class FxMain extends Application {
         tableView.getColumns().add(argsColumn);
 
         var refreshButton = new Button("Refresh");
-        refreshButton.setOnAction(ignoreEvent -> System.out.println("Button pressed"));
+        refreshButton.setOnAction(ignoreEvent -> {
+            System.out.println("Refresh button pressed");
+            app.setQuery(new SelectAll());
+        });
+
+        TextField filterTextField = new TextField();
+
+        var filterButton = new Button("Filter");
+        filterButton.setOnAction(ignoreEvent -> {
+            System.out.println("Filter button pressed");
+            app.setQuery(new FilterByName(filterTextField.getText()));
+        });
 
         var box = new VBox();
         var scene = new Scene(box, 640, 480);
         var elements = box.getChildren();
         elements.addAll(refreshButton,
+                        filterButton,
+                        filterTextField,
                         tableView);
-
         primaryStage.setScene(scene);
         primaryStage.show();
     }
