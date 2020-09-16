@@ -3,14 +3,12 @@ package com.codecool.processwatch.gui;
 import com.codecool.processwatch.domain.ProcessSource;
 import com.codecool.processwatch.domain.ProcessWatchApp;
 import com.codecool.processwatch.queries.FilterByName;
+import com.codecool.processwatch.queries.FilterByPPID;
 import com.codecool.processwatch.queries.SelectAll;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -60,6 +58,7 @@ public class FxMain extends Application {
         tableView.getColumns().add(userNameColumn);
         tableView.getColumns().add(processNameColumn);
         tableView.getColumns().add(argsColumn);
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         var refreshButton = new Button("Refresh");
         refreshButton.setOnAction(ignoreEvent -> {
@@ -67,20 +66,49 @@ public class FxMain extends Application {
             app.setQuery(new SelectAll());
         });
 
-        TextField filterTextField = new TextField();
+        TextField userFilterTextField = new TextField();
 
-        var filterButton = new Button("Filter");
-        filterButton.setOnAction(ignoreEvent -> {
-            System.out.println("Filter button pressed");
-            app.setQuery(new FilterByName(filterTextField.getText()));
+        var userFilterButton = new Button("Filter by user");
+        userFilterButton.setOnAction(ignoreEvent -> {
+            System.out.println("User filter button pressed");
+            app.setQuery(new FilterByName(userFilterTextField.getText()));
         });
+
+        TextField ppidFilterTextField = new TextField();
+
+        var ppidFilterButton = new Button("Filter by parentID");
+        ppidFilterButton.setOnAction(ignoreEvent -> {
+            System.out.println("PPID filter button pressed");
+            app.setQuery(new FilterByPPID(ppidFilterTextField.getText()));
+        });
+
+        var deleteButton = new Button("End process");
+        deleteButton.setOnAction(ignoreEvent ->{
+            System.out.println("Delete button pressed");
+            System.out.println();
+        });
+
+        deleteButton.setOnAction(e -> buttonClicked());
+
+        private void buttonClicked(){
+            String message = "";
+            ObservableList<String> moves;
+            moves = tableView.getSelectionModel().getSelectedItems();
+            for(String m: moves){
+                message += m + "\n";
+            }
+            System.out.println(message);
+        }
 
         var box = new VBox();
         var scene = new Scene(box, 640, 480);
         var elements = box.getChildren();
         elements.addAll(refreshButton,
-                        filterButton,
-                        filterTextField,
+                        userFilterButton,
+                        userFilterTextField,
+                        ppidFilterButton,
+                        ppidFilterTextField,
+                        deleteButton,
                         tableView);
         primaryStage.setScene(scene);
         primaryStage.show();
