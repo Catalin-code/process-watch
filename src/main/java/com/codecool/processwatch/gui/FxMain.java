@@ -10,8 +10,12 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+
+
 import static javafx.collections.FXCollections.observableArrayList;
 
 /**
@@ -41,7 +45,6 @@ public class FxMain extends Application {
 
         ObservableList<ProcessView> displayList = observableArrayList();
         app = new App(displayList);
-        // TODO: Factor out the repetitive code
         var tableView = new TableView<ProcessView>(displayList);
         var pidColumn = new TableColumn<ProcessView, Long>("Process ID");
         pidColumn.setCellValueFactory(new PropertyValueFactory<ProcessView, Long>("pid"));
@@ -60,56 +63,84 @@ public class FxMain extends Application {
         tableView.getColumns().add(argsColumn);
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
+        GridPane gridUp = new GridPane();
+        gridUp.setHgap(10);
+        gridUp.setVgap(12);
+
+        GridPane gridDown = new GridPane();
+        gridDown.setHgap(10);
+        gridDown.setVgap(12);
+
+        HBox refreshButtons = new HBox();
+        refreshButtons.setSpacing(10.0);
         var refreshButton = new Button("Refresh");
         refreshButton.setOnAction(ignoreEvent -> {
             System.out.println("Refresh button pressed");
             app.setQuery(new SelectAll());
         });
+        var refreshButtonInfo = new Button("?");
+        refreshButtons.getChildren().addAll(refreshButton, refreshButtonInfo);
 
+        HBox userFilterButtons = new HBox();
+        userFilterButtons.setSpacing(10.0);
         TextField userFilterTextField = new TextField();
-
         var userFilterButton = new Button("Filter by user");
         userFilterButton.setOnAction(ignoreEvent -> {
             System.out.println("User filter button pressed");
             app.setQuery(new FilterByName(userFilterTextField.getText()));
         });
+        var userFilterButtonInfo = new Button("?");
+        userFilterButtons.getChildren().addAll(userFilterButton, userFilterButtonInfo);
 
+        HBox ppidFilterButtons = new HBox();
+        ppidFilterButtons.setSpacing(10.0);
         TextField ppidFilterTextField = new TextField();
-
         var ppidFilterButton = new Button("Filter by parentID");
         ppidFilterButton.setOnAction(ignoreEvent -> {
             System.out.println("PPID filter button pressed");
             app.setQuery(new FilterByPPID(ppidFilterTextField.getText()));
         });
+        var ppidFilterButtonInfo = new Button("?");
+        ppidFilterButtons.getChildren().addAll(ppidFilterButton, ppidFilterButtonInfo);
 
+        HBox deleteButtons = new HBox();
+        deleteButtons.setSpacing(10.0);
         var deleteButton = new Button("End process");
         deleteButton.setOnAction(ignoreEvent ->{
             System.out.println("Delete button pressed");
-            System.out.println();
-        });
-
-        deleteButton.setOnAction(e -> buttonClicked());
-
-        private void buttonClicked(){
-            String message = "";
-            ObservableList<String> moves;
-            moves = tableView.getSelectionModel().getSelectedItems();
-            for(String m: moves){
-                message += m + "\n";
+            for (ProcessView p: tableView.getSelectionModel().getSelectedItems()){
+                ProcessHandle handler = ProcessHandle.of(p.getPid()).get();
+                handler.destroy();
+                app.setQuery(new SelectAll());
             }
-            System.out.println(message);
-        }
+        });
+        var deleteButtonInfo = new Button("?");
+        deleteButtons.getChildren().addAll(deleteButton, deleteButtonInfo);
+
+        HBox aboutButtons = new HBox();
+        aboutButtons.setSpacing(10.0);
+        var aboutButton = new Button("About");
+        aboutButton.setOnAction(ignoreEvent ->{
+            System.out.println("About button pressed");
+        });
+        var aboutButtonInfo = new Button("?");
+        aboutButtons.getChildren().addAll(aboutButton, aboutButtonInfo);
+
+        gridUp.add(refreshButtons, 0, 0 , 1, 1);
+        gridUp.add(userFilterButtons, 0, 1 , 1, 1);
+        gridUp.add(userFilterTextField, 0, 2);
+        gridUp.add(ppidFilterButtons, 0, 3 , 1, 1);
+        gridUp.add(ppidFilterTextField, 0, 4);
+        gridDown.add(deleteButtons, 0, 0, 1, 1);
+        gridDown.add(aboutButtons, 0, 1, 1, 1);
+
 
         var box = new VBox();
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
         var scene = new Scene(box, 640, 480);
         var elements = box.getChildren();
-        elements.addAll(refreshButton,
-                        userFilterButton,
-                        userFilterTextField,
-                        ppidFilterButton,
-                        ppidFilterTextField,
-                        deleteButton,
-                        tableView);
+        elements.addAll(gridUp, tableView, gridDown);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
