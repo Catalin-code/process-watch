@@ -77,6 +77,7 @@ public class FxMain extends Application {
             app.setQuery(new SelectAll());
         });
         var refreshButtonInfo = new Button("?");
+        refreshButtonInfo.setTooltip(new Tooltip("Refreshes the process list"));
         refreshButtons.getChildren().addAll(refreshButton, refreshButtonInfo);
 
         HBox userFilterButtons = new HBox();
@@ -88,6 +89,7 @@ public class FxMain extends Application {
             app.setQuery(new FilterByUser(userFilterTextField.getText()));
         });
         var userFilterButtonInfo = new Button("?");
+        userFilterButtonInfo.setTooltip(new Tooltip("Filters the processes by user"));
         userFilterButtons.getChildren().addAll(userFilterButton, userFilterButtonInfo);
 
         HBox ppidFilterButtons = new HBox();
@@ -99,6 +101,7 @@ public class FxMain extends Application {
             app.setQuery(new FilterByPPID(ppidFilterTextField.getText()));
         });
         var ppidFilterButtonInfo = new Button("?");
+        ppidFilterButtonInfo.setTooltip(new Tooltip("Filters the processes by parent process ID"));
         ppidFilterButtons.getChildren().addAll(ppidFilterButton, ppidFilterButtonInfo);
 
         HBox nameFilterButtons = new HBox();
@@ -110,6 +113,7 @@ public class FxMain extends Application {
             app.setQuery(new FilterByName(nameFilterTextField.getText()));
         });
         var nameFilterButtonInfo = new Button("?");
+        nameFilterButtonInfo.setTooltip(new Tooltip("Filters the processes by name"));
         nameFilterButtons.getChildren().addAll(nameFilterButton, nameFilterButtonInfo);
 
         HBox deleteButtons = new HBox();
@@ -124,15 +128,26 @@ public class FxMain extends Application {
             }
         });
         var deleteButtonInfo = new Button("?");
+        deleteButtonInfo.setTooltip(new Tooltip("Ends selected processes"));
         deleteButtons.getChildren().addAll(deleteButton, deleteButtonInfo);
 
+        Alert aboutPopup = new Alert(Alert.AlertType.INFORMATION);
+        aboutPopup.setTitle("About");
+        aboutPopup.setHeaderText(null);
+        aboutPopup.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        aboutPopup.setContentText("Process Watch is a free tool from Poseidon Development, part of Codecool Global. " +
+                                    "The tool monitors and displays in real-time all file system " +
+                                    "activity on a Microsoft Windows or Unix-like operating system.");
         HBox aboutButtons = new HBox();
         aboutButtons.setSpacing(10.0);
         var aboutButton = new Button("About");
         aboutButton.setOnAction(ignoreEvent ->{
             System.out.println("About button pressed");
+            aboutPopup.showAndWait();
         });
+
         var aboutButtonInfo = new Button("?");
+        aboutButtonInfo.setTooltip(new Tooltip("Displays a pop-up with a brief description about the application"));
         aboutButtons.getChildren().addAll(aboutButton, aboutButtonInfo);
 
         gridUp.add(refreshButtons, 0, 0 , 1, 1);
