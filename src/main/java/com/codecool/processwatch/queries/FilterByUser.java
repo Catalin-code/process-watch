@@ -8,10 +8,10 @@ import java.util.stream.Stream;
 /**
  * This is the identity query.  It selects everything from its source.
  */
-public class FilterByName implements Query {
+public class FilterByUser implements Query {
     private String name;
 
-    public FilterByName(String name){
+    public FilterByUser(String name){
         this.name = name;
     }
     /**
@@ -19,6 +19,6 @@ public class FilterByName implements Query {
      */
     @Override
     public Stream<Process> run(Stream<Process> input) {
-        return input.filter(p ->p.getName().contains(name));
+        return input.filter(p ->p.getUserName().contains(name));
     }
 }

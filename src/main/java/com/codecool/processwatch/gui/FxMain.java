@@ -1,8 +1,7 @@
 package com.codecool.processwatch.gui;
 
-import com.codecool.processwatch.domain.ProcessSource;
-import com.codecool.processwatch.domain.ProcessWatchApp;
 import com.codecool.processwatch.queries.FilterByName;
+import com.codecool.processwatch.queries.FilterByUser;
 import com.codecool.processwatch.queries.FilterByPPID;
 import com.codecool.processwatch.queries.SelectAll;
 import javafx.application.Application;
@@ -11,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -87,7 +85,7 @@ public class FxMain extends Application {
         var userFilterButton = new Button("Filter by user");
         userFilterButton.setOnAction(ignoreEvent -> {
             System.out.println("User filter button pressed");
-            app.setQuery(new FilterByName(userFilterTextField.getText()));
+            app.setQuery(new FilterByUser(userFilterTextField.getText()));
         });
         var userFilterButtonInfo = new Button("?");
         userFilterButtons.getChildren().addAll(userFilterButton, userFilterButtonInfo);
@@ -102,6 +100,17 @@ public class FxMain extends Application {
         });
         var ppidFilterButtonInfo = new Button("?");
         ppidFilterButtons.getChildren().addAll(ppidFilterButton, ppidFilterButtonInfo);
+
+        HBox nameFilterButtons = new HBox();
+        nameFilterButtons.setSpacing(10.0);
+        TextField nameFilterTextField = new TextField();
+        var nameFilterButton = new Button("Filter by name");
+        nameFilterButton.setOnAction(ignoreEvent -> {
+            System.out.println("Name filter button pressed");
+            app.setQuery(new FilterByName(nameFilterTextField.getText()));
+        });
+        var nameFilterButtonInfo = new Button("?");
+        nameFilterButtons.getChildren().addAll(nameFilterButton, nameFilterButtonInfo);
 
         HBox deleteButtons = new HBox();
         deleteButtons.setSpacing(10.0);
@@ -131,9 +140,10 @@ public class FxMain extends Application {
         gridUp.add(userFilterTextField, 0, 2);
         gridUp.add(ppidFilterButtons, 0, 3 , 1, 1);
         gridUp.add(ppidFilterTextField, 0, 4);
+        gridUp.add(nameFilterButtons, 0, 5 , 1, 1);
+        gridUp.add(nameFilterTextField, 0, 6);
         gridDown.add(deleteButtons, 0, 0, 1, 1);
         gridDown.add(aboutButtons, 0, 1, 1, 1);
-
 
         var box = new VBox();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
